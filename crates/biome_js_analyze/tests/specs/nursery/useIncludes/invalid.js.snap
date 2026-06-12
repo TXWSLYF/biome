@@ -1,6 +1,5 @@
 ---
 source: crates/biome_js_analyze/tests/spec_tests.rs
-assertion_line: 149
 expression: invalid.js
 ---
 # Input
@@ -39,6 +38,16 @@ str.indexOf("world") === -1;
 (arr.indexOf(1)) !== -1;
 arr.indexOf(1) !== (-1);
 
+// lastIndexOf
+arr.lastIndexOf(1) !== -1;
+arr.lastIndexOf(1) === -1;
+str.lastIndexOf("world") !== -1;
+
+// Array#some() with simple equality
+arr.some(x => x === 1);
+arr.some(x => 1 === x);
+arr.some(x => { return x === 1; });
+arr.some(function(x) { return x === 1; });
 ```
 
 # Diagnostics
@@ -623,6 +632,7 @@ invalid.js:33:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━�
   > 33 │ arr.indexOf(1) !== (-1);
        │ ^^^^^^^^^^^^^^^^^^^^^^^
     34 │ 
+    35 │ // lastIndexOf
   
   i indexOf() returns a numeric index, not a boolean. Comparing it against -1 is error-prone and harder to read.
   
@@ -637,6 +647,202 @@ invalid.js:33:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━�
     33    │ - arr.indexOf(1)·!==·(-1);
        33 │ + arr.includes(1);
     34 34 │   
+    35 35 │   // lastIndexOf
+  
+
+```
+
+```
+invalid.js:36:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Checking the result of lastIndexOf() against -1 to test for presence.
+  
+    35 │ // lastIndexOf
+  > 36 │ arr.lastIndexOf(1) !== -1;
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^
+    37 │ arr.lastIndexOf(1) === -1;
+    38 │ str.lastIndexOf("world") !== -1;
+  
+  i lastIndexOf() returns a numeric index, not a boolean. Comparing it against -1 is error-prone and harder to read.
+  
+  i Use includes() instead, which directly expresses the intent and returns a boolean.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with .includes().
+  
+    34 34 │   
+    35 35 │   // lastIndexOf
+    36    │ - arr.lastIndexOf(1)·!==·-1;
+       36 │ + arr.includes(1);
+    37 37 │   arr.lastIndexOf(1) === -1;
+    38 38 │   str.lastIndexOf("world") !== -1;
+  
+
+```
+
+```
+invalid.js:37:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Checking the result of lastIndexOf() against -1 to test for presence.
+  
+    35 │ // lastIndexOf
+    36 │ arr.lastIndexOf(1) !== -1;
+  > 37 │ arr.lastIndexOf(1) === -1;
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^
+    38 │ str.lastIndexOf("world") !== -1;
+    39 │ 
+  
+  i lastIndexOf() returns a numeric index, not a boolean. Comparing it against -1 is error-prone and harder to read.
+  
+  i Use !...includes() instead, which directly expresses the intent and returns a boolean.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with !...includes().
+  
+    35 35 │   // lastIndexOf
+    36 36 │   arr.lastIndexOf(1) !== -1;
+    37    │ - arr.lastIndexOf(1)·===·-1;
+       37 │ + !
+       38 │ + arr.includes(1);
+    38 39 │   str.lastIndexOf("world") !== -1;
+    39 40 │   
+  
+
+```
+
+```
+invalid.js:38:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Checking the result of lastIndexOf() against -1 to test for presence.
+  
+    36 │ arr.lastIndexOf(1) !== -1;
+    37 │ arr.lastIndexOf(1) === -1;
+  > 38 │ str.lastIndexOf("world") !== -1;
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    39 │ 
+    40 │ // Array#some() with simple equality
+  
+  i lastIndexOf() returns a numeric index, not a boolean. Comparing it against -1 is error-prone and harder to read.
+  
+  i Use includes() instead, which directly expresses the intent and returns a boolean.
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with .includes().
+  
+    36 36 │   arr.lastIndexOf(1) !== -1;
+    37 37 │   arr.lastIndexOf(1) === -1;
+    38    │ - str.lastIndexOf("world")·!==·-1;
+       38 │ + str.includes("world");
+    39 39 │   
+    40 40 │   // Array#some() with simple equality
+  
+
+```
+
+```
+invalid.js:41:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Using Array#some() with a simple equality callback to test for presence.
+  
+    40 │ // Array#some() with simple equality
+  > 41 │ arr.some(x => x === 1);
+       │ ^^^^^^^^^^^^^^^^^^^^^^
+    42 │ arr.some(x => 1 === x);
+    43 │ arr.some(x => { return x === 1; });
+  
+  i This callback only tests for equality against a single value, which can be expressed more clearly with .includes().
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with .includes().
+  
+    39 39 │   
+    40 40 │   // Array#some() with simple equality
+    41    │ - arr.some(x·=>·x·===·1);
+       41 │ + arr.includes(1);
+    42 42 │   arr.some(x => 1 === x);
+    43 43 │   arr.some(x => { return x === 1; });
+  
+
+```
+
+```
+invalid.js:42:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Using Array#some() with a simple equality callback to test for presence.
+  
+    40 │ // Array#some() with simple equality
+    41 │ arr.some(x => x === 1);
+  > 42 │ arr.some(x => 1 === x);
+       │ ^^^^^^^^^^^^^^^^^^^^^^
+    43 │ arr.some(x => { return x === 1; });
+    44 │ arr.some(function(x) { return x === 1; });
+  
+  i This callback only tests for equality against a single value, which can be expressed more clearly with .includes().
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with .includes().
+  
+    40 40 │   // Array#some() with simple equality
+    41 41 │   arr.some(x => x === 1);
+    42    │ - arr.some(x·=>·1·===·x);
+       42 │ + arr.includes(1·);
+    43 43 │   arr.some(x => { return x === 1; });
+    44 44 │   arr.some(function(x) { return x === 1; });
+  
+
+```
+
+```
+invalid.js:43:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Using Array#some() with a simple equality callback to test for presence.
+  
+    41 │ arr.some(x => x === 1);
+    42 │ arr.some(x => 1 === x);
+  > 43 │ arr.some(x => { return x === 1; });
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    44 │ arr.some(function(x) { return x === 1; });
+  
+  i This callback only tests for equality against a single value, which can be expressed more clearly with .includes().
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with .includes().
+  
+    41 41 │   arr.some(x => x === 1);
+    42 42 │   arr.some(x => 1 === x);
+    43    │ - arr.some(x·=>·{·return·x·===·1;·});
+       43 │ + arr.includes(1);
+    44 44 │   arr.some(function(x) { return x === 1; });
+  
+
+```
+
+```
+invalid.js:44:1 lint/nursery/useIncludes  FIXABLE  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  i Using Array#some() with a simple equality callback to test for presence.
+  
+    42 │ arr.some(x => 1 === x);
+    43 │ arr.some(x => { return x === 1; });
+  > 44 │ arr.some(function(x) { return x === 1; });
+       │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  
+  i This callback only tests for equality against a single value, which can be expressed more clearly with .includes().
+  
+  i This rule belongs to the nursery group, which means it is not yet stable and may change in the future. Visit https://biomejs.dev/linter/#nursery for more information.
+  
+  i Unsafe fix: Replace with .includes().
+  
+    42 42 │   arr.some(x => 1 === x);
+    43 43 │   arr.some(x => { return x === 1; });
+    44    │ - arr.some(function(x)·{·return·x·===·1;·});
+       44 │ + arr.includes(1);
   
 
 ```

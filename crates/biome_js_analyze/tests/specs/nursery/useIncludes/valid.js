@@ -25,3 +25,29 @@ arr.indexOf(1) + 1;
 
 // not a member call at all
 indexOf(1) !== -1;
+
+const posLast = arr.lastIndexOf(1);
+arr.lastIndexOf(1, 2) !== -1;
+
+const y = { x: 1 };
+
+function isValid() {
+    return true;
+}
+
+function getBar() {
+    return 1;
+}
+
+// some() patterns that should not be flagged
+arr.some(x => x == undefined);
+arr.some(x => x !== 1);
+arr.some((x, index) => x === index);
+arr.some(x => (x === 1) && isValid());
+arr.some(x => y === 1);
+arr.some(x => y.x === 1);
+arr.some(x => {
+    const bar = getBar();
+    return x === bar;
+});
+arr.some(x => x > 1);

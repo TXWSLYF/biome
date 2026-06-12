@@ -31,3 +31,14 @@ str.indexOf("world") === -1;
 // parenthesized expressions
 (arr.indexOf(1)) !== -1;
 arr.indexOf(1) !== (-1);
+
+// lastIndexOf
+arr.lastIndexOf(1) !== -1;
+arr.lastIndexOf(1) === -1;
+str.lastIndexOf("world") !== -1;
+
+// Array#some() with simple equality
+arr.some(x => x === 1);
+arr.some(x => 1 === x);
+arr.some(x => { return x === 1; });
+arr.some(function(x) { return x === 1; });
